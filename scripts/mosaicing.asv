@@ -1,0 +1,56 @@
+%--------------------------------------------------------------------------
+%
+%                           mosaicing.m
+%
+%   This function performs image mosaicing on a set of source images.
+%   It accepts as argument a struct of parameters defined as follows:
+%
+%   params: set                 # of the image set
+%           peak_thresh         peak threshold for SIFT
+%           edge_thresh         edge threshold for SIFT
+%           ransac_thresh       distance threshold for RANSAC
+%           ransac_iter         max iterations for RANSAC
+%           pixel_tol           pixel tolerance for homography computation
+%
+%   Author: Lorenzo Busellato, 2023
+%
+%--------------------------------------------------------------------------
+function mosaicing(params)
+    % Recover the image set's path
+    set = dir(strcat("images/set", num2str(params.set), "/"));
+    % Load the first image
+    img1 = imread(strjoin({set(3).folder,set(3).name},'/'));
+    img1 = single(rgb2gray(img1));
+    % Iterate over all other images in the set
+    for i = 4:size(set, 1)
+        % Load the next image
+        img2 = imread(strjoin({set(i).folder,set(i).name},'/'));
+        s_img2 = single(rgb2gray(img2));
+        % Compute both images features and descriptors
+        [feat1, desc1] = vl_sift(img1, 'PeakThresh', params.peak_thresh, ...
+                                 'edgethresh', params.edge_thresh);
+        [feat2, desc2] = sift(s_img2, 'PeakThresh', params.peak_thresh, ...
+                              'edgethresh', params.edge_thresh);
+        % Match the descriptors
+        [matches, scores] = vl_ubcmatch(desc1, desc2);
+        % Apply RANSAC to the y coordinates
+        points = [feat1(2, matches(1,:)); feat2(2, matches(2,:))];
+        [ids] = ransac_points(points, params);
+        matches = matches(:,ids);
+        % Apply RANSAC to the x coordinates
+        points = [feat1(1, matches(1,:)); feat2(1, matches(2,:))];
+        [ids] = ransac_points(points, params);
+        matches = matches(:,ids);
+        % Robust homography computation with RANSAC
+        H = ransac_homography(feat1, feat2, matches, params);
+        % Mosaicing
+        if i == 4 % First iteration
+            result = rgb2gray(img1);
+        else
+            img1 = 
+        end
+        % Merge the images and show the result so far
+        result = image_merge(result, rgb2gray(img2), H);
+        imshow(uint8(result));
+    end
+end
