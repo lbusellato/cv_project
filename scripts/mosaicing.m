@@ -45,7 +45,7 @@ function mosaic = mosaicing(params)
         % Robust homography computation with RANSAC
         H = ransac_homography(feat1, feat2, matches, params);
         % Merge the images
-        mosaic = image_merge(mosaic, img2_rgb, H);
+        mosaic = image_merge(mosaic, img2_rgb, H, params);
     end
     mosaic = uint8(mosaic);
     % Save the result

@@ -19,7 +19,7 @@ function H = ransac_homography(feat1, feat2, matches, params)
     f = waitbar(0, 'RANSAC - homograpy'); % Progress bar
     for i = 1:params.ransac_iter
         waitbar(i/params.ransac_iter, f, sprintf('RANSAC - homography: %d %%', floor(i/params.ransac_iter*100)));
-        % Pick 4 random features
+        % Pick 4 random features and correspondences
         r1 = ceil(rand*length(matches));
         r2 = ceil(rand*length(matches));
         r3 = ceil(rand*length(matches));
