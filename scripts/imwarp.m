@@ -23,6 +23,8 @@ function [I2, bb] = imwarp(I,H)
     xi=ivec(pp(1,:)',size(x,1));
     yi=ivec(pp(2,:)',size(y,1));
     I2(:,:,1)=interp2(0:size(I(:,:,1),2)-1, 0:size(I(:,:,1),1)-1,double(I(:,:,1)),xi,yi,'linear',NaN);
-    I2(:,:,2)=interp2(0:size(I(:,:,2),2)-1, 0:size(I(:,:,2),1)-1,double(I(:,:,2)),xi,yi,'linear',NaN);
-    I2(:,:,3)=interp2(0:size(I(:,:,3),2)-1, 0:size(I(:,:,3),1)-1,double(I(:,:,3)),xi,yi,'linear',NaN);
+    if(size(I,3) > 1)
+        I2(:,:,2)=interp2(0:size(I(:,:,2),2)-1, 0:size(I(:,:,2),1)-1,double(I(:,:,2)),xi,yi,'linear',NaN);
+        I2(:,:,3)=interp2(0:size(I(:,:,3),2)-1, 0:size(I(:,:,3),1)-1,double(I(:,:,3)),xi,yi,'linear',NaN);
+    end
 end

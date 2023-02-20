@@ -3,8 +3,9 @@
 %                           image_merge.m
 %
 %   This function merges two images given the homography H between them.
-%   The function also performs image blending if requested, by averaging
-%   the pixel intensities in the overlapping areas.
+%   The function also performs image blending with 2 available modes:
+%       - 'average': averages pixel intensities in the overlapping region
+%       - 'linear': applies linear alpha blending
 %
 %   Author: Lorenzo Busellato, VR472249, 2023
 %
@@ -50,7 +51,8 @@ function I = image_merge(img1_rgb, img2_rgb, H, params)
     end
     % Compose the images
     I = mosaic_ref + mosaic_mov;
-    if params.blending
+    % Apply blending
+    if strcmp(params.blending, 'average')
         % Get a mask for the overlapping part
         mask_ref = mosaic_ref ~= 0;
         mask_mov = mosaic_mov ~= 0;
@@ -58,6 +60,43 @@ function I = image_merge(img1_rgb, img2_rgb, H, params)
         % Working channel-by-channel introduces some holes in the mask
         mask = imfill(mask,'holes'); 
         % Blend the overlap by taking the weighted average of the images intensities
-        I(mask) = (1-params.alpha).*mosaic_ref(mask) + params.alpha.*mosaic_mov(mask);
+        I(mask) =0.5*(mosaic_ref(mask) + mosaic_mov(mask));
+    elseif strcmp(params.blending, 'linear')
+        % Get a mask for the overlapping part
+        mask_ref = mosaic_ref ~= 0;
+        mask_mov = mosaic_mov ~= 0;
+        mask = mask_ref & mask_mov;
+        % Working channel-by-channel introduces some holes in the mask
+        mask = imfill(mask,'holes'); 
+        % Remove the overlap, the blending will take care of it
+        I(mask) = 0;
+        % Create an alpha mask
+        alpha_mask = zeros(size(mask,1),size(mask,2));
+        for j = 1:size(mask,1)
+            minIdx = -1;
+            maxIdx = -1;
+            % For the current row, get the first and last column of the overlap
+            for k = 1:size(mask,2)
+                if mask(j,k) && minIdx == -1
+                    minIdx = k;
+                end
+                if  mask(j,k)
+                    maxIdx = k;
+                end
+            end
+            if minIdx == maxIdx
+                continue
+            end
+            % Create a gradient in the overlap
+            decrease_step = 1/(maxIdx - minIdx);
+            for m = minIdx:maxIdx+1
+                alpha_mask(j,m) = 1 - decrease_step*(m-minIdx);
+            end
+        end
+        % Extract the parts of the images that overlap
+        mr = uint8(double(mask).*mosaic_ref);
+        mm = uint8(double(mask).*mosaic_mov);
+        % Apply alpha blending
+        I = uint8(I) + uint8(alpha_mask.*double(mr) + (1-alpha_mask).*double(mm));
     end
 end

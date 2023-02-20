@@ -28,11 +28,10 @@ function mosaic = mosaicing(params)
         params.ransac_thresh = i * 2 * params.ransac_thresh;
         % Load the next image
         img2_rgb = imread(strjoin({set(i).folder,set(i).name},'/'));
-        img2 = single(im2gray(img2_rgb));
         fprintf("Computing feature descriptors\n");
         % Compute both images features and descriptors
         [feat1, desc1] = vl_sift(single(im2gray(uint8(mosaic))));
-        [feat2, desc2] = vl_sift(img2);
+        [feat2, desc2] = vl_sift(single(im2gray(img2_rgb)));
         % Match the descriptors
         [matches, scores] = vl_ubcmatch(desc1, desc2);
         % Apply RANSAC to the y coordinates
@@ -46,7 +45,7 @@ function mosaic = mosaicing(params)
         fprintf("Computing homography with %s\n", set(i).name);
         if params.ransac
             % Robust homography computation with RANSAC
-            H = ransac_homography(feat1, feat2, matches, params);
+            H(:,:,i)  = ransac_homography(feat1, feat2, matches, params);
         else
             % Pick 4 random features and correspondences
             r1 = ceil(rand*length(matches));
@@ -62,10 +61,10 @@ function mosaic = mosaicing(params)
                   feat2(1:2, matches(2,r3))'
                   feat2(1:2, matches(2,r4))'];
             % Compute the homography between them
-            H = homography(p1', p2');
+            H(:,:,i) = homography(p1', p2');
         end
         % Merge the images
-        mosaic = image_merge(mosaic, img2_rgb, H, params);
+        mosaic = image_merge(mosaic, img2_rgb, H(:,:,i), params);
     end
     mosaic = uint8(mosaic);
     % Save the result
