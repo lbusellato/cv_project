@@ -65,7 +65,7 @@ function mosaic = mosaicing(params)
             H = homography(p1', p2');
         end
         % Merge the images
-        mosaic = test_image_merge(mosaic, img2_rgb, H, params);
+        mosaic = image_merge(mosaic, img2_rgb, H, params);
     end
     mosaic = uint8(mosaic);
     % Save the result

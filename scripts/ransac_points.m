@@ -20,11 +20,13 @@ function [ids] = ransac_points(points, params)
     p1 = p1./max(p1); p2 = p2./max(p2);
     points = [p1; p2]';
     % RANSAC
+    outliers_min = inf;
     max_inlier_cnt = 0;
     ids = [];
     for i = 1:params.ransac_iter
         % Reset variables
         inlier_cnt = 0; % This iteration's # of inliers
+        outlier_cnt = 0; % This iteration's # of outliers
         curr_ids = []; % This iteration's inliers indexes
         % Randomly select 2 points
         random_sel = ceil(rand(1,2)*size(points,1));
@@ -41,11 +43,18 @@ function [ids] = ransac_points(points, params)
             if dist < params.ransac_thresh % Inlier detected
                 inlier_cnt = inlier_cnt + 1;
                 curr_ids(inlier_cnt) = id;
+            else % Outlier detected
+                outlier_cnt = outlier_cnt + 1;
+                if outlier_cnt > outliers_min
+                    % This iteration is worse than the best-so-far, exit early
+                    break;
+                end
             end
         end
         if inlier_cnt > max_inlier_cnt % This iteration produces more inliers
             max_inlier_cnt = inlier_cnt;
             ids = curr_ids;
+            outliers_min = outlier_cnt;
         end
     end
 end

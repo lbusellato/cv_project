@@ -22,7 +22,7 @@ addpath(genpath("mosaics/"));
 %% PARAMETERS
 
 % IMAGE SET
-params.set = 3;
+params.set =1;
 % RANSAC
 params.ransac = true;
 params.ransac_thresh = 0.01;

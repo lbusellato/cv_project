@@ -42,6 +42,10 @@ function H = ransac_homography(feat1, feat2, matches, params)
             % Update outlier count
             if ~is_in_set(p2', feat2(1:2,matches(2,:))', params.pixel_tolerance, i)
                 outlier_cnt = outlier_cnt + 1;
+                if outlier_cnt > outliers_min 
+                    % This iteration is worse than the best-so-far, exit early
+                    break
+                end
             end
         end
         % If the homography produces less outliers, save it as the best so far
