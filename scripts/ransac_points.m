@@ -22,9 +22,7 @@ function [ids] = ransac_points(points, params)
     % RANSAC
     max_inlier_cnt = 0;
     ids = [];
-    f = waitbar(0, 'RANSAC - features'); % Progress bar
     for i = 1:params.ransac_iter
-        waitbar(i/params.ransac_iter, f, sprintf('RANSAC - features: %d %%', floor(i/params.ransac_iter*100)));
         % Reset variables
         inlier_cnt = 0; % This iteration's # of inliers
         curr_ids = []; % This iteration's inliers indexes
@@ -50,5 +48,4 @@ function [ids] = ransac_points(points, params)
             ids = curr_ids;
         end
     end
-    close(f);
 end

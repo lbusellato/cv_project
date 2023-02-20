@@ -22,13 +22,15 @@ addpath(genpath("mosaics/"));
 %% PARAMETERS
 
 % IMAGE SET
-params.set = 1;
+params.set = 3;
 % RANSAC
+params.ransac = true;
 params.ransac_thresh = 0.01;
-params.ransac_iter = 200;
+params.ransac_iter = 500;
 % HOMOGRAPHY
 params.pixel_tolerance = 5;
 % IMAGE BLENDING
+params.blending = true;
 params.alpha = 0.5;
 
 %% MOSAICING
