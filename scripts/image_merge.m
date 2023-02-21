@@ -12,7 +12,7 @@
 %--------------------------------------------------------------------------
 function I = image_merge(img1_rgb, img2_rgb, H, params)
     % Warping the second image to the plane of the first one
-    [img2_warp, bb] = imwarp(img2_rgb, inv(H));
+    [img2_warp, bb] = rgb_imwarp(img2_rgb, inv(H));
     % Eliminate from the warped image NaN values resulted from the warping
     ind = find(isnan(img2_warp)); 
     img2_warp(ind) = 0;

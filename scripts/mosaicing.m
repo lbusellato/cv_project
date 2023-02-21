@@ -45,7 +45,7 @@ function mosaic = mosaicing(params)
         fprintf("Computing homography with %s\n", set(i).name);
         if params.ransac
             % Robust homography computation with RANSAC
-            H(:,:,i)  = ransac_homography(feat1, feat2, matches, params);
+            H  = ransac_homography(feat1, feat2, matches, params);
         else
             % Pick 4 random features and correspondences
             r1 = ceil(rand*length(matches));
@@ -61,10 +61,10 @@ function mosaic = mosaicing(params)
                   feat2(1:2, matches(2,r3))'
                   feat2(1:2, matches(2,r4))'];
             % Compute the homography between them
-            H(:,:,i) = homography(p1', p2');
+            H = homography(p1', p2');
         end
         % Merge the images
-        mosaic = image_merge(mosaic, img2_rgb, H(:,:,i), params);
+        mosaic = image_merge(mosaic, img2_rgb, H, params);
     end
     mosaic = uint8(mosaic);
     % Save the result

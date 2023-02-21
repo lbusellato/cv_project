@@ -1,6 +1,6 @@
 %--------------------------------------------------------------------------
 %
-%                           imwarp.m
+%                           rgb_imwarp.m
 %
 %   This function merges two images given the homography H between them.
 %   Adapted to work with RGB images from the imwarp function by A.Fusiello.   
@@ -8,7 +8,7 @@
 %   Author: Lorenzo Busellato, VR472249, 2023
 %
 %--------------------------------------------------------------------------
-function [I2, bb] = imwarp(I,H)
+function [I2, bb] = rgb_imwarp(I,H)
     % Compute the smallest bb containing the whole image
     corners = [0, 0, size(I,2), size(I,2);
                0, size(I,1), 0, size(I,1)];
