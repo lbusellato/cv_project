@@ -17,6 +17,13 @@ function [I2, bb] = rgb_imwarp(I,H)
     maxx = ceil(max(corners_x(1,:)));
     miny = floor(min(corners_x(2,:)));
     maxy = ceil(max(corners_x(2,:)));   
+    % When not using RANSAC, the mins can go to -inf
+    if minx < 1
+        minx = 1;
+    end
+    if miny < 1
+        miny = 1;
+    end
     bb = [minx; miny; maxx; maxy];
     [x,y] = meshgrid(minx:maxx-1,miny:maxy-1);
     pp = p2t(inv(H),[vec(x)';vec(y)']);

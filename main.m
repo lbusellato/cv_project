@@ -22,13 +22,13 @@ addpath(genpath("mosaics/"));
 %% PARAMETERS
 
 % IMAGE SET
-params.set = 3; % Image set to use
+params.set = 1; % Image set to use
 % RANSAC
 params.ransac = true; % Use RANSAC or not
 params.ransac_thresh = 0.1; % Inlier tolerance for RANSAC on features
 params.ransac_iter = 1000; % Maximum iterations for RANSAC
 % HOMOGRAPHY
-params.pixel_tolerance = 1; % Inlier tolerance for RANSAC on homography
+params.pixel_tolerance = 5; % Inlier tolerance for RANSAC on homography
 % IMAGE BLENDING
 params.blending = 'linear'; % 'none', 'average', 'linear'
 
