@@ -73,24 +73,15 @@ function I = image_merge(img1_rgb, img2_rgb, H, params)
         % Create an alpha mask
         alpha_mask = zeros(size(mask,1),size(mask,2));
         for j = 1:size(mask,1)
-            minIdx = -1;
-            maxIdx = -1;
-            % For the current row, get the first and last column of the overlap
-            for k = 1:size(mask,2)
-                if mask(j,k) && minIdx == -1
-                    minIdx = k;
-                end
-                if  mask(j,k)
-                    maxIdx = k;
-                end
-            end
-            if minIdx == maxIdx
-                continue
-            end
-            % Create a gradient in the overlap
-            decrease_step = 1/(maxIdx - minIdx);
-            for m = minIdx:maxIdx+1
-                alpha_mask(j,m) = 1 - decrease_step*(m-minIdx);
+            % Find the first and last non-zero columns
+            minIdx = find(mask(j,:,1),1);
+            maxIdx = find(mask(j,:,1),1,'last');
+            if size(minIdx,2) == 1 && size(maxIdx,2) == 1
+                % Create a gradient in the overlap
+                decrease_step = 1/(maxIdx - minIdx);
+                for m = minIdx:maxIdx+1
+                    alpha_mask(j,m) = 1 - decrease_step*(m-minIdx);
+                end            
             end
         end
         % Extract the parts of the images that overlap
