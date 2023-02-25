@@ -34,20 +34,14 @@ function H = ransac_homography(feat1, feat2, matches, params)
         curr_H = homography(p1', p2');
         % Count the outliers
         outlier_cnt = 0;
-        for i = 1:length(matches)
-            p1 = feat1(1:2, matches(1,i));
-            p1 = [p1(1:2); 1]; % p1 in homogeneous coordinates
-            p2 = curr_H * p1; % Project p2 with the homography
-            p2 = ceil(p2./p2(end));
-            % Update outlier count
-            if ~is_in_set(p2', feat2(1:2,matches(2,:))', params.pixel_tolerance, i)
-                outlier_cnt = outlier_cnt + 1;
-                if outlier_cnt > outliers_min 
-                    % This iteration is worse than the best-so-far, exit early
-                    break
-                end
-            end
-        end
+        p1 = feat1(1:2, matches(1,:));
+        p1 = [p1; ones(1,size(p1,2))]; % p1 in homogeneous coordinates
+        p2 = curr_H * p1; % Project p2 with the homography
+        p2 = ceil(p2(1:2,:)./p2(3,:));
+        % Count how many outliers we get with this homographt
+        dist = abs(p2(1:2,:) - feat2(1:2,matches(2,:)));
+        dist = dist > params.pixel_tolerance;
+        outlier_cnt = sum(all(dist == [1 1]'));
         % If the homography produces less outliers, save it as the best so far
         if outlier_cnt < outliers_min
             H = curr_H;
