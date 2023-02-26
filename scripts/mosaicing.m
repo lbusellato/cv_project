@@ -6,11 +6,10 @@
 %   It accepts as argument a struct of parameters defined as follows:
 %
 %   params: set                 # of the image set
-%           peak_thresh         peak threshold for SIFT
-%           edge_thresh         edge threshold for SIFT
 %           ransac_thresh       distance threshold for RANSAC
 %           ransac_iter         max iterations for RANSAC
-%           pixel_tol           pixel tolerance for homography computation
+%           pixel_tolerance     pixel tolerance for homography computation
+%           blending            image blending method ('none','average','linear')
 %
 %   Author: Lorenzo Busellato, VR472249, 2023
 %

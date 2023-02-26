@@ -4,6 +4,7 @@
 %
 %   This function merges two images given the homography H between them.
 %   The function also performs image blending with 2 available modes:
+%       - 'none': no image blending
 %       - 'average': averages pixel intensities in the overlapping region
 %       - 'linear': applies linear alpha blending
 %

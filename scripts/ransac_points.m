@@ -21,10 +21,8 @@ function [ids] = ransac_points(points, params)
     points = [p1; p2]';
     % RANSAC
     outliers_min = inf;
-    max_inlier_cnt = 0;
     for i = 1:params.ransac_iter
         % Reset variables
-        inlier_cnt = 0; % This iteration's # of inliers
         outlier_cnt = 0; % This iteration's # of outliers
         curr_ids = []; % This iteration's inliers indexes
         % Randomly select 2 points
@@ -36,8 +34,8 @@ function [ids] = ransac_points(points, params)
         m = (y1 - y2) / (x1 - x2);
         q = y1 - m*x1;
         % Use the line as a model
-        yt = m*points(:,1) + q;
-        dist = abs(points(:,2) - yt);
+        y = m*points(:,1) + q;
+        dist = abs(points(:,2) - y);
         % Binary mask of the inlier ids
         dist = dist < params.ransac_thresh;
         % Count the outliers

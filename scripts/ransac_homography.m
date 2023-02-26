@@ -7,9 +7,8 @@
 %   It accepts as argument the sets of features feat1 and feat2, the vector
 %   of matches between them and a struct of parameters defined as follows:
 %
-%   params: ransac_thresh       distance threshold for RANSAC
-%           ransac_iter         max iterations for RANSAC
-%           pixel_tol           pixel tolerance for homography computation
+%   params: ransac_iter         max iterations for RANSAC
+%           pixel_tolerance     pixel tolerance for homography computation
 %
 %   Author: Lorenzo Busellato, VR472249, 2023
 %
